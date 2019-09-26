@@ -85,6 +85,22 @@ module.exports = class Tree {
         }
     }
 
+    /**
+     * 获取指定节点最底层节点ID
+     * @param {String} id 节点ID
+     */
+    getTreeLastId(id) {
+        const node = this.getIndex(id)
+
+        if (node.children && node.children.length > 0) {
+            const lastId = node.children[node.children.length - 1]
+
+            return this.getTreeLastId(lastId)
+        }
+
+        return id
+    }
+
     removeIndex(index) {
         const self = this
 
