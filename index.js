@@ -101,6 +101,42 @@ module.exports = class Tree {
         return id
     }
 
+    /**
+     * 获取下一个节点
+     * @param {String} id 节点ID
+     * @param {Boolean} open 是否只获取打开的子节点
+     */
+    getTreeNextId(id, open = true) {
+        const node = this.getIndex(id)
+        const isGetChild = !open || (open && !node.node.collapsed)
+
+        if (isGetChild && node.children && node.children.length > 0) {
+            const firstId = node.children[0]
+
+            return firstId
+        }
+
+        if (node.next != null) {
+            return node.next
+        }
+
+        const getNext = (id) => {
+            const node = this.getIndex(id)
+
+            if (node.next != null) {
+                return node.next
+            }
+
+            if (node.parent === 1) {
+                return 1
+            }
+
+            return getNext(node.parent)
+        }
+
+        return getNext(node.parent)
+    }
+
     removeIndex(index) {
         const self = this
 
