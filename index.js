@@ -88,17 +88,34 @@ module.exports = class Tree {
     /**
      * 获取指定节点最底层节点ID
      * @param {String} id 节点ID
+     * @param {Boolean} open 是否只获取打开的子节点
      */
-    getTreeLastId(id) {
+    getTreeLastId(id, open = true) {
         const node = this.getIndex(id)
+        const isGetChild = !open || (open && !node.node.collapsed)
 
-        if (node.children && node.children.length > 0) {
+        if (isGetChild && node.children && node.children.length > 0) {
             const lastId = node.children[node.children.length - 1]
 
             return this.getTreeLastId(lastId)
         }
 
         return id
+    }
+
+    /**
+     * 获取上一个节点
+     * @param {String} id 节点ID
+     * @param {Boolean} open 是否只获取打开的子节点
+     */
+    getTreePrevId(id, open = true) {
+        const node = this.getIndex(id)
+
+        if (node.prev == null) {
+            return node.parent
+        }
+
+        return this.getTreeLastId(node.prev, open)
     }
 
     /**
@@ -127,7 +144,7 @@ module.exports = class Tree {
                 return node.next
             }
 
-            if (node.parent === 1) {
+            if (node.id === 1 || node.parent === 1) {
                 return 1
             }
 
